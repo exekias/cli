@@ -68,11 +68,15 @@ jobs:
       run: |
         go test -failfast -v .
 
+    - name: Fail
+      run: |
+        exit 1
+
   # We want to release all merges to main for now:
   release:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 1
-    if: github.ref == 'refs/heads/main'
+    #if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v2
