@@ -86,8 +86,8 @@ jobs:
       with:
         fetch-depth: 0
 
-    - run: git config --global user.email "github@xata.io"
-    - run: git config --global user.name "Github actions"
+    - run: git config user.name 'github-actions[bot]'
+    - run: git config user.email 'github-actions[bot]@users.noreply.github.com'
 
     - name: Release new version
       run: |
