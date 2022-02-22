@@ -89,3 +89,5 @@ jobs:
     - name: Release new version
       run: |
         echo y | ./scripts/bump_version.sh
+
+    - uses: ./.github/workflows/goreleaser
