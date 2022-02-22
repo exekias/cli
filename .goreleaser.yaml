@@ -23,7 +23,6 @@ builds:
 archives:
   - replacements:
       amd64: x86_64
-      darwin: macOS
     files:
       - none* # package only the binary
     format_overrides:
