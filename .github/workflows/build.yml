@@ -89,3 +89,9 @@ jobs:
     - name: Release new version
       run: |
         echo y | ./scripts/bump_version.sh
+
+  # Tags created by build workflow don't trigger, call goreleaser:
+  publish-release:
+    needs: [build, release]
+    if: github.ref == 'refs/heads/main'
+    uses: exekias/cli/.github/workflows/goreleaser.yml@main

@@ -4,11 +4,7 @@ on:
   push:
     tags:
       - '*'
-  # Tags created by build workflow don't trigger ^, this ensures we still run goreleaser: 
-  workflow_run:
-    workflows: [build]
-    types: [completed]
-    branches: [main]
+  workflow_call:
 
 permissions:
   contents: write
@@ -39,3 +35,49 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
           # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+
+  on-failure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    if: needs.goreleaser.result != 'skipped' && failure()
+    needs: [goreleaser]
+    steps:
+      - name: Post failure to Slack
+        uses: slackapi/slack-github-action@v1.17.0
+        with:
+          channel-id: '#cd-activity'
+          payload: |
+            {
+              "text": "Publication of Xata CLI failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":red_circle: @here *Publication of Xata CLI failed when triggered by ${{ github.actor }}* :red_circle:"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*More info:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Commit URL:* ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                },
+                {
+                  "type": "divider"
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.slack_token }}
