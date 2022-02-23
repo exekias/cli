@@ -4,11 +4,7 @@ on:
   push:
     tags:
       - '*'
-  # Tags created by build workflow don't trigger ^, this ensures we still run goreleaser: 
-  workflow_run:
-    workflows: [build]
-    types: [completed]
-    branches: [main]
+  workflow_call:
 
 permissions:
   contents: write
